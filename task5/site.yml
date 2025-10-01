@@ -1,0 +1,29 @@
+---
+- name: Настройка Nginx
+  hosts: all
+  become: yes
+  tasks:
+    - name: Обновление кэша пакетов и всех пакетов
+      apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Установка Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Проверка, запуска и автозагрузки Nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Заменa стандартной страницы Nginx
+      copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '644'
